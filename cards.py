@@ -50,5 +50,5 @@ if __name__ == '__main__':
     order = 7
     cards, num_pictures = create_cards(order)
     display_using_stars(cards, num_pictures)
-    display_using_numbers(cards, num_pictures)
+    display_using_numbers(cards)
     check_cards(cards)
