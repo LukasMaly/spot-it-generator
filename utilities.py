@@ -5,8 +5,8 @@ import numpy as np
 def generate_numbered_image(number, path, height=256, width=256):
 
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 5
-    thickness = 5
+    font_scale = 4
+    thickness = 4
     color = (0, 0, 0, 255)
     text_size = cv2.getTextSize(str(number), font, font_scale, thickness)
     text_width = text_size[0][0]
