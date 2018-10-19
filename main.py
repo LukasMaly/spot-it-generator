@@ -4,7 +4,7 @@ from cards import create_cards
 from utilities import generate_numbered_image
 
 if __name__ == '__main__':
-    order = 11
+    order = 7
     cards, num_pictures = create_cards(order)
 
     if not os.path.isdir('./images'):
