@@ -1,15 +1,20 @@
-import os
+import glob
 
-from cards import create_cards
-from utilities import generate_numbered_image
+import labels
+from reportlab.graphics import shapes
 
-if __name__ == '__main__':
-    order = 7
-    cards, num_pictures = create_cards(order)
+pt_to_mm = 0.352777
+mm_to_pt = 1 / pt_to_mm
 
-    if not os.path.isdir('./images'):
-        os.makedirs('./images')
+images = sorted(glob.glob('./images/*.png'))
 
-    for i in range(1, num_pictures + 1):
-        filename = str(i).zfill(len(str(num_pictures + 1))) + '.png'
-        generate_numbered_image(i, os.path.join('./images', filename))
+specs = labels.Specification(210, 297, 2, 3, 80, 80, corner_radius=40)
+
+def draw_label(label, width, height, obj):
+    label.add(shapes.Image(20 * mm_to_pt, 20 * mm_to_pt, 40 * mm_to_pt, 40 * mm_to_pt, obj))
+
+sheet = labels.Sheet(specs, draw_label, border=True)
+
+sheet.add_labels(images)
+
+sheet.save('sheets.pdf')
