@@ -6,6 +6,14 @@ import numpy as np
 from cards import create_cards
 
 def generate_numbered_image(number, path, height=256, width=256):
+    """
+    Generates the images with numbers to be used as placeholder images.
+
+    :param number: number to be drawn in the image
+    :param path: path where to save the image
+    :param height: height of the image in pixels
+    :param width: width of the image in pixels
+    """
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 4

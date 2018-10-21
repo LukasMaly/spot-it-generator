@@ -1,4 +1,5 @@
 circlify
 numpy
+# opencv-python
 pylabels
 reportlab

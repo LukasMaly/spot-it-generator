@@ -3,12 +3,22 @@ import math
 
 
 def is_prime(n):
+    """
+    Check if number is a prime.
+
+    :param n: number to be checked
+    """
     if n % 2 == 0 and n > 2:
         return False
     return all(n % i for i in range(3, int(math.sqrt(n)) + 1, 2))
 
 
 def create_cards(p):
+    """
+    Creates the list of sets with images' numbers.
+
+    :param p: order of the game
+    """
     if not is_prime(p):
         raise ValueError("The order must be a prime number.")
     for min_factor in range(2, 1 + int(p ** 0.5)):
