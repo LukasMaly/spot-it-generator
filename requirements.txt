@@ -1,3 +1,4 @@
+circlify
 numpy
 pylabels
 reportlab
