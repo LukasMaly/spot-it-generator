@@ -1,10 +1,8 @@
 import glob
-import os
+import math
 import random
-import shutil
 
 import circlify as circ
-from PIL import Image as PILImage
 from reportlab.graphics import renderPDF
 from reportlab.graphics.shapes import Circle, Drawing, Image
 from reportlab.lib import colors
@@ -54,10 +52,6 @@ def create_sheets(order, images):
     y = [y_space + i * (diameter + y_space) for i in range(rows)]
     y = y[::-1]
 
-    # create a temporary directory for rotated images
-    if not os.path.isdir('./temp'):
-        os.makedirs('./temp')
-
     def draw_card(obj):
         """Function called to draw an individual card."""
 
@@ -81,22 +75,20 @@ def create_sheets(order, images):
             cy = margin + (circle.y + 1) / 2 * (diameter - 2 * margin)
             r = circle.r * (diameter - 2 * margin) / 2 * 0.9
 
-            # # draw a circle around the image
+            # # draw a circle around the image (for debugging)
             # cir = Circle(cx, cy, r, fillColor=colors.white)
             # drawing.add(cir)
 
-            # open the image, rotate it by random angle and save it to temporary directory
-            img = PILImage.open(images[i])
+            # rotate the image by a random angle and draw it on the card
             angle = random.randint(0, 359)
-            img = img.rotate(angle, expand=1, fillcolor=(255, 255, 255))
-            path = os.path.join('./temp', os.path.splitext(os.path.split(images[i])[1])[0] + '_' + str(angle).zfill(3) + '.png')
-            img.save(path)
+            img = Image(-r, -r, 2 * r, 2 * r, images[i])
+            d = Drawing(2 * r, 2 * r)
+            d.rotate(angle)
+            d.add(img)
+            d.translate(cx * math.cos(math.radians(-angle)) - cy * math.sin(math.radians(-angle)),
+                        cx * math.sin(math.radians(-angle)) + cy * math.cos(math.radians(-angle)))
 
-            # calculate the position of the image and place it on the card
-            x = cx - r
-            y = cy - r
-            img = Image(x, y, 2 * r, 2 * r, path)
-            drawing.add(img)
+            drawing.add(d)
 
         return drawing
 
@@ -108,9 +100,6 @@ def create_sheets(order, images):
 
     # save the canvas
     c.save()
-
-    # remove the temporary folder and its content
-    shutil.rmtree('./temp')
 
 
 if __name__ == '__main__':
