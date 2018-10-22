@@ -1,4 +1,2 @@
 circlify
-numpy
-# opencv-python
 reportlab
