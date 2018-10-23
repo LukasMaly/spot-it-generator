@@ -4,19 +4,23 @@ import random
 
 import circlify as circ
 from reportlab.graphics import renderPDF
-from reportlab.graphics.shapes import Circle, Drawing, Image
+from reportlab.graphics.shapes import Circle, Drawing
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
 from cards import create_cards
+
+# seed for random generator
+random.seed(42)
 
 # size of the page
 page_size = A4
 
 # diameter of the card
-diameter = 80 * mm
+diameter = 85 * mm
 # margin from the card's border
 margin = 5 * mm
 
@@ -52,8 +56,8 @@ def create_sheets(order, images):
     y = [y_space + i * (diameter + y_space) for i in range(rows)]
     y = y[::-1]
 
-    def draw_card(obj):
-        """Function called to draw an individual card."""
+    def draw_cards_border():
+        """Function called to draw a card's border."""
 
         # card's drawing
         drawing = Drawing(diameter, diameter)
@@ -62,41 +66,44 @@ def create_sheets(order, images):
         circle = Circle(diameter / 2, diameter / 2, diameter / 2, fillColor=colors.white)
         drawing.add(circle)
 
+        return drawing
+
+    def draw_cards_images(card, x, y):
+        """Function called to draw a card's images."""
+
         # randomly choose sizes of images
-        s = random.choices(sizes, k=len(obj))
+        s = random.choices(sizes, k=len(card))
         s = sorted(s, reverse=True)
 
         # create circles packed in circle
         circles = circ.circlify(s, with_enclosure=False)
 
-        for i, circle in zip(obj, circles):
+        for i, circle in zip(card, circles):
             # calculate the center and diameter of a circle
             cx = margin + (circle.x + 1) / 2 * (diameter - 2 * margin)
             cy = margin + (circle.y + 1) / 2 * (diameter - 2 * margin)
-            r = circle.r * (diameter - 2 * margin) / 2 * 0.9
+            r = circle.r * (diameter - 2 * margin) / 2 * 0.9  # leave some space between circles
 
-            # # draw a circle around the image (for debugging)
-            # cir = Circle(cx, cy, r, fillColor=colors.white)
-            # drawing.add(cir)
-
-            # rotate the image by a random angle and draw it on the card
+            # generate a random angle
             angle = random.randint(0, 359)
-            img = Image(-r, -r, 2 * r, 2 * r, images[i])
-            d = Drawing(2 * r, 2 * r)
-            d.rotate(angle)
-            d.add(img)
-            d.translate(cx * math.cos(math.radians(-angle)) - cy * math.sin(math.radians(-angle)),
-                        cx * math.sin(math.radians(-angle)) + cy * math.cos(math.radians(-angle)))
 
-            drawing.add(d)
+            c.saveState()
 
-        return drawing
+            # move the canvas origin to the image's position
+            c.translate(x + cx, y + cy)
+            # and rotate it by random angle
+            c.rotate(angle)
+            # now draw the image relative to the origin
+            c.drawImage(ImageReader(images[i]), -r, -r, 2*r, 2*r, 'auto')
+
+            c.restoreState()
 
     # add cards
     for i, card in enumerate(cards):
         if i != 0 and i % (rows * columns) == 0:
             c.showPage()  # add a new page
-        renderPDF.draw(draw_card(card), c, x[i % columns], y[(i // columns) % rows])
+        renderPDF.draw(draw_cards_border(), c, x[i % columns], y[(i // columns) % rows])
+        draw_cards_images(card, x[i % columns], y[(i // columns) % rows])
 
     # save the canvas
     c.save()
