@@ -84,6 +84,14 @@ def create_sheets(order, images):
             cy = margin + (circle.y + 1) / 2 * (diameter - 2 * margin)
             r = circle.r * (diameter - 2 * margin) / 2 * 0.9  # leave some space between circles
 
+            # # draw a circle around the image
+            # def draw_circles():
+            #     drawing = Drawing(diameter, diameter)
+            #     circle = Circle(cx, cy, r, fillColor=colors.white)
+            #     drawing.add(circle)
+            #     return drawing
+            # renderPDF.draw(draw_circles(), c, x, y)
+
             # generate a random angle
             angle = random.randint(0, 359)
 
@@ -93,8 +101,14 @@ def create_sheets(order, images):
             c.translate(x + cx, y + cy)
             # and rotate it by random angle
             c.rotate(angle)
-            # now draw the image relative to the origin
-            c.drawImage(ImageReader(images[i]), -r, -r, 2*r, 2*r, 'auto')
+
+            # draw the image
+            img = ImageReader(images[i])
+            width, height = img.getSize()
+            phi = math.atan(height / width)
+            a = 2 * r * math.cos(phi)
+            b = 2 * r * math.sin(phi)
+            c.drawImage(img, -a/2, -b/2, a, b, 'auto')
 
             c.restoreState()
 
