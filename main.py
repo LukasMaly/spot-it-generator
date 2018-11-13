@@ -20,7 +20,7 @@ random.seed(42)
 page_size = A4
 
 # diameter of the card
-diameter = 85 * mm
+diameter = 80 * mm
 # margin from the card's border
 margin = 5 * mm
 
@@ -56,14 +56,18 @@ def create_sheets(order, images):
     y = [y_space + i * (diameter + y_space) for i in range(rows)]
     y = y[::-1]
 
-    def draw_cards_border():
+    def draw_cards(fill_color=colors.white, border_width=0, border_color=colors.white):
         """Function called to draw a card's border."""
 
         # card's drawing
         drawing = Drawing(diameter, diameter)
 
-        # card's border
-        circle = Circle(diameter / 2, diameter / 2, diameter / 2, fillColor=colors.white)
+        # card's border with margin
+        circle = Circle(diameter / 2, diameter / 2, diameter / 2, fillColor=border_color, strokeOpacity=0)
+        drawing.add(circle)
+
+        # card's fill
+        circle = Circle(diameter / 2, diameter / 2, diameter / 2 - border_width, fillColor=fill_color, strokeOpacity=0)
         drawing.add(circle)
 
         return drawing
@@ -116,7 +120,7 @@ def create_sheets(order, images):
     for i, card in enumerate(cards):
         if i != 0 and i % (rows * columns) == 0:
             c.showPage()  # add a new page
-        renderPDF.draw(draw_cards_border(), c, x[i % columns], y[(i // columns) % rows])
+        renderPDF.draw(draw_cards(border_width=1, border_color=colors.black), c, x[i % columns], y[(i // columns) % rows])
         draw_cards_images(card, x[i % columns], y[(i // columns) % rows])
 
     # save the canvas
