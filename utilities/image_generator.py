@@ -35,9 +35,9 @@ if __name__ == '__main__':
     order = 5
     cards, num_pictures = create_cards(order)
 
-    if not os.path.isdir('./images'):
-        os.makedirs('./images')
+    if not os.path.isdir('../images'):
+        os.makedirs('../images')
 
     for i in range(1, num_pictures + 1):
         filename = str(i).zfill(len(str(num_pictures + 1))) + '.png'
-        generate_numbered_image(i, os.path.join('./images', filename))
+        generate_numbered_image(i, os.path.join('../images', filename))
