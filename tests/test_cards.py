@@ -1,6 +1,6 @@
 import unittest
 
-from cards import is_prime, create_cards
+from spotit.cards import is_prime, create_cards
 
 
 class TestCards(unittest.TestCase):
