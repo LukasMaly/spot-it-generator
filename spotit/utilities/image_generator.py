@@ -34,7 +34,7 @@ def generate_images(path, order):
     
     :param path: path where to store the images
     :type path: str
-    :param order: number of images at each card
+    :param order: order of the game
     :type order: int
     """
     

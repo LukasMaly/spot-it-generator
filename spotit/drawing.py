@@ -81,7 +81,7 @@ def create_sheets(filename, order, images, sizes=[1, 2, 3, 4], seed=42, page_siz
     
     :param filename: filename of the PDF
     :type filename: str
-    :param order: number of images at each card
+    :param order: order of the game
     :type order: int
     :param images: list of files with images
     :type images: list
